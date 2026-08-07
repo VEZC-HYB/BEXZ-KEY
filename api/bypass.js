@@ -6,22 +6,21 @@ export default async function handler(req, res) {
     }
 
     try {
-        // Logika dasar melacak redirect link (bisa dikustomisasi dengan logika ekstrak token/API pihak ketiga jika diperlukan)
-        const response = await fetch(url, { 
-            redirect: 'follow',
-            headers: {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
-            }
-        });
-        
-        const finalDestination = response.url;
+        // Menggunakan API pihak ketiga yang khusus memproses link pendek
+        const apiResponse = await fetch(`https://api.bypass.vip/bypass?url=${encodeURIComponent(url)}`);
+        const data = await apiResponse.json();
 
-        return res.status(200).json({ 
-            status: 'success', 
-            destination: finalDestination 
-        });
+        const destination = data.destination || data.result;
+
+        if (destination) {
+            return res.status(200).json({ 
+                status: 'success', 
+                destination: destination 
+            });
+        } else {
+            return res.status(400).json({ error: 'Failed to bypass this link.' });
+        }
     } catch (error) {
-        return res.status(500).json({ error: 'Failed to process link' });
+        return res.status(500).json({ error: 'Internal server error.' });
     }
 }
-
