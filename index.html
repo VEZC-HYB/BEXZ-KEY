@@ -15,7 +15,6 @@
         body {
             background-color: #121212;
             color: #ffffff;
-            /* Ubah dari center ke flex-start dengan padding atas agar posisi benar-benar di atas */
             display: flex;
             justify-content: center;
             align-items: flex-start;
@@ -32,7 +31,16 @@
             gap: 12px;
         }
 
-        /* KOTAK PROGRESS BAR PALING ATAS */
+        /* 1. KOTAK KONTROL UTAMA (Tombol Generate Key awalnya di atas) */
+        .main-control-box {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* 2. BAR PROGRESS DOANG (Awalnya tersembunyi, nanti muncul di PALING ATAS layar pas diklik) */
         .step-box {
             background-color: #161618;
             border: 1px solid #252528;
@@ -40,9 +48,10 @@
             padding: 16px;
             width: 100%;
             text-align: center;
-            display: none; /* Muncul pas Generate Key dipencet */
+            display: none; 
             flex-direction: column;
             align-items: center;
+            order: -99; /* Memaksa elemen ini pindah ke posisi paling atas container */
         }
 
         .step-box h3 {
@@ -217,7 +226,7 @@
 
     <div class="container" id="mainContainer">
         
-        <!-- KOTAK PROGRESS BAR (POSISI PALING ATAS URUTAN HTML & LAYAR) -->
+        <!-- HANYA BAR PROGRESS DOANG (Akan melompat ke PALING ATAS layar saat Generate Key dipencet) -->
         <div class="step-box" id="stepBox">
             <h3>⚡ To generate your free key, please click the button below <span id="stepsLeftCount">5</span> more time(s)</h3>
             <p>This supports the project and keeps keys free!</p>
@@ -268,7 +277,7 @@
         function initiateProcess() {
             if (!isStepStarted) {
                 isStepStarted = true;
-                // Memunculkan progress bar persis di paling atas layar
+                // Memunculkan HANYA bar progress doang di PALING ATAS layar menggunakan flex
                 document.getElementById('stepBox').style.display = 'flex';
             } else {
                 executeFinalGenerate();
