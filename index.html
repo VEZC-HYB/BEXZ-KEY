@@ -31,7 +31,7 @@
             gap: 16px;
         }
 
-        /* 1. KOTAK PROGRESS BAR (Posisinya SEKARANG DI PALING ATAS SEJAK AWAL) */
+        /* 1. KOTAK PROGRESS BAR (Posisinya di PALING ATAS, tapi awalnya disembunyikan) */
         .step-box {
             background-color: #161618;
             border: 1px solid #252528;
@@ -39,7 +39,7 @@
             padding: 20px;
             width: 100%;
             text-align: center;
-            display: flex; /* Langsung ditampilkan dari awal */
+            display: none; /* Baru muncul pas Generate Key dipencet */
             flex-direction: column;
             align-items: center;
         }
@@ -83,7 +83,7 @@
             margin-bottom: 15px;
         }
 
-        /* 2. TOMBOL UTAMA (Generate Key / Continue) */
+        /* 2. TOMBOL UTAMA */
         .btn {
             background-color: #e53935;
             color: white;
@@ -168,7 +168,7 @@
             color: #ddd;
         }
 
-        /* 4. HOW IT WORKS (DI BAWAH SENDIRI) */
+        /* 4. HOW IT WORKS */
         .info-box {
             background-color: #161618;
             border: 1px solid #252528;
@@ -216,7 +216,7 @@
 
     <div class="container" id="mainContainer">
         
-        <!-- KOTAK PROGRESS BAR (DI PALING ATAS SEJAK AWAL) -->
+        <!-- KOTAK PROGRESS BAR (Posisinya ditaruh PALING ATAS di HTML) -->
         <div class="step-box" id="stepBox">
             <h3>⚡ To generate your free key, please click the button below <span id="stepsLeftCount">5</span> more time(s)</h3>
             <p>This supports the project and keeps keys free!</p>
@@ -224,11 +224,11 @@
                 <div class="progress-bar-fill" id="progressBar"></div>
             </div>
             <div class="progress-text" id="progressText">0 / 5 completed</div>
-            <!-- Tombol Continue yang membuka link iklan/Shopee di tab baru -->
+            <!-- Tombol Continue buat buka link iklan -->
             <button class="btn" id="stepBtn" onclick="handleStepClick()">👉 Continue (5 left)</button>
         </div>
 
-        <!-- TOMBOL UTAMA DI BAWAHNYA -->
+        <!-- TOMBOL UTAMA (Generate Key awal) -->
         <button class="btn" id="mainBtn" onclick="initiateProcess()">
             <span id="mainBtnText">Generate Key</span>
         </button>
@@ -248,7 +248,7 @@
             </div>
         </div>
 
-        <!-- HOW IT WORKS (PALING BAWAH) -->
+        <!-- HOW IT WORKS -->
         <div class="info-box">
             <h4>How it works</h4>
             <ol>
@@ -263,17 +263,21 @@
     <script>
         let currentStep = 0;
         const totalSteps = 5;
-        let isStepCompleted = false;
+        let isStepStarted = false;
 
         function initiateProcess() {
-            if (isStepCompleted) {
-                // Proses generate akhir setelah 5 step selesai
+            if (!isStepStarted) {
+                isStepStarted = true;
+                // Pas tombol Generate Key dipencet, kotak progress bar muncul di PALING ATAS
+                document.getElementById('stepBox').style.display = 'flex';
+            } else {
+                // Kalau step sudah selesai, ini fungsi buat generate key terakhir
                 executeFinalGenerate();
             }
         }
 
         function handleStepClick() {
-            // Membuka link web tujuan di tab baru
+            // Membuka link iklan/Shopee di tab baru
             window.open('https://shopee.co.id', '_blank');
 
             currentStep++;
@@ -285,11 +289,10 @@
             document.getElementById('stepBtn').innerText = `👉 Continue (${left} left)`;
 
             if (currentStep >= totalSteps) {
-                isStepCompleted = true;
-                // Sembunyikan kotak progress bar setelah 5 langkah selesai
+                // Selesai 5 langkah: Kotak progress bar hilang
                 document.getElementById('stepBox').style.display = 'none';
                 
-                // Tombol utama berubah teksnya jadi ada ikon kunci
+                // Tombol utama di bawah berubah jadi ada ikon kunci
                 const mainBtn = document.getElementById('mainBtn');
                 mainBtn.innerHTML = '🔑 <span id="mainBtnText">Generate Key</span>';
             }
