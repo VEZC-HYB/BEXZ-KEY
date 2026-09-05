@@ -3,333 +3,409 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Key System</title>
+    <title>BEXZ — Key System Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg-color: #0d1117;
+            --card-bg: #181c26;
+            --card-border: #3c4664;
+            --accent-green: #058c05;
+            --accent-green-hover: #07b307;
+            --accent-blue: #1620af;
+            --accent-blue-hover: #2234d9;
+            --text-main: #edf2f7;
+            --text-sub: #8c9bba;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Montserrat', sans-serif;
         }
 
         body {
-            background-color: #121212;
-            color: #ffffff;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
             display: flex;
             justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
-            padding: 10px 20px;
+            align-items: center;
+            padding: 20px;
+            background-image: radial-gradient(circle at 50% 30%, #1e2842 0%, #0d1117 70%);
         }
 
         .container {
             width: 100%;
-            max-width: 400px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
-        }
-
-        /* 1. KOTAK KONTROL UTAMA (Tombol Generate Key awalnya di atas) */
-        .main-control-box {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
-        }
-
-        /* 2. BAR PROGRESS DOANG (Awalnya tersembunyi, nanti muncul di PALING ATAS layar pas diklik) */
-        .step-box {
-            background-color: #161618;
-            border: 1px solid #252528;
-            border-radius: 12px;
-            padding: 16px;
-            width: 100%;
-            text-align: center;
-            display: none; 
-            flex-direction: column;
-            align-items: center;
-            order: -99; /* Memaksa elemen ini pindah ke posisi paling atas container */
-        }
-
-        .step-box h3 {
-            font-size: 13px;
-            margin-bottom: 6px;
-            line-height: 1.4;
-            color: #ddd;
-        }
-
-        .step-box h3 span {
-            color: #e53935;
-        }
-
-        .step-box p {
-            font-size: 11px;
-            color: #777;
-            margin-bottom: 12px;
-        }
-
-        .progress-bar-bg {
-            background-color: #262629;
-            border-radius: 10px;
-            height: 6px;
-            width: 100%;
+            max-width: 480px;
+            background: var(--card-bg);
+            border: 1.5px solid var(--card-border);
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6), 0 0 20px rgba(60, 70, 100, 0.2);
+            position: relative;
             overflow: hidden;
-            margin-bottom: 6px;
         }
 
-        .progress-bar-fill {
-            background-color: #e53935;
-            height: 100%;
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-
-        .progress-text {
-            font-size: 11px;
-            color: #888;
-            margin-bottom: 12px;
-        }
-
-        /* TOMBOL UTAMA */
-        .btn {
-            background-color: #e53935;
-            color: white;
-            border: none;
-            padding: 14px 24px;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, #3c4664, #5865f2, #058c05, #3c4664);
+            background-size: 200% 100%;
+            animation: gradientMove 4s linear infinite;
+        }
+
+        @keyframes gradientMove {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 200% 0%; }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .header h1 {
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            color: #ffffff;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+        }
+
+        .header p {
+            font-size: 11px;
+            color: var(--text-sub);
+            margin-top: 4px;
+        }
+
+        .how-it-works {
+            background: rgba(16, 19, 26, 0.8);
+            border: 1px solid rgba(60, 70, 100, 0.5);
+            border-radius: 12px;
+            padding: 16px 18px;
+            margin-bottom: 24px;
+        }
+
+        .how-it-works h2 {
+            font-size: 13px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .steps {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .step-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 12px;
+            line-height: 1.4;
+            color: #d1d5db;
+        }
+
+        .step-num {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ff5555;
+            font-weight: 800;
+            font-size: 11px;
+            min-width: 20px;
+            height: 20px;
+            border-radius: 6px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .action-area {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 12px;
+            letter-spacing: 0.8px;
+            color: #ffffff;
+            cursor: pointer;
+            transition: all 0.25s ease;
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 8px;
-            box-shadow: 0 0 15px rgba(229, 57, 53, 0.3);
-            transition: background 0.2s;
         }
 
-        .btn:hover {
-            background-color: #d32f2f;
+        .btn-green {
+            background: var(--accent-green);
+            box-shadow: 0 4px 14px rgba(5, 140, 5, 0.3);
+        }
+
+        .btn-green:hover:not(:disabled) {
+            background: var(--accent-green-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(5, 140, 5, 0.5);
         }
 
         .btn:disabled {
-            background-color: #b71c1c;
-            opacity: 0.8;
+            background: #2a3040 !important;
+            color: #6c7a9c !important;
             cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
         }
 
-        /* KOTAK HASIL KEY */
-        .result-section {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-            gap: 8px;
+        .btn-blue {
+            background: var(--accent-blue);
         }
 
-        .result-title {
-            font-size: 11px;
-            color: #888;
-            margin-top: 5px;
+        .btn-blue:hover {
+            background: var(--accent-blue-hover);
+            transform: translateY(-2px);
         }
 
-        .key-display {
-            background-color: #161618;
-            border: 1px solid #252528;
-            border-radius: 10px;
-            padding: 12px;
-            width: 100%;
-            text-align: center;
-            font-family: monospace;
-            font-size: 12px;
-            color: #ff5252;
-            letter-spacing: 0.5px;
-        }
-
-        .expiry-text {
-            font-size: 10px;
-            color: #777;
-            margin-bottom: 5px;
-        }
-
-        /* BANNER SPONSOR */
-        .banner {
-            background: linear-gradient(135deg, #0d47a1, #1565c0);
-            border-radius: 8px;
-            padding: 10px 14px;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            display: none;
-        }
-
-        .banner-text h4 {
-            font-size: 11px;
-            color: #ffeb3b;
-        }
-
-        .banner-text p {
-            font-size: 9px;
-            color: #ddd;
-        }
-
-        /* HOW IT WORKS */
-        .info-box {
-            background-color: #161618;
-            border: 1px solid #252528;
-            border-radius: 12px;
-            padding: 16px;
-            width: 100%;
-        }
-
-        .info-box h4 {
-            font-size: 12px;
-            margin-bottom: 10px;
-            color: #ccc;
-        }
-
-        .info-box ol {
-            padding-left: 15px;
-            font-size: 11px;
-            color: #777;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .info-box ol li::marker {
-            color: #e53935;
-            font-weight: bold;
-        }
-
-        /* SPINNER LOADING */
+        /* Loading Spinner */
         .spinner {
-            width: 14px;
-            height: 14px;
-            border: 2px solid rgba(255,255,255,0.3);
+            display: none;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
             border-radius: 50%;
-            border-top-color: #fff;
+            border-top-color: #ffffff;
             animation: spin 0.8s linear infinite;
         }
 
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+
+        .key-display-box {
+            display: none;
+            background: #10131a;
+            border: 1px dashed var(--card-border);
+            border-radius: 8px;
+            padding: 10px 14px;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .key-text {
+            font-family: monospace;
+            font-size: 13px;
+            color: #50fa7b;
+            font-weight: 700;
+            word-break: break-all;
+        }
+
+        .copy-btn {
+            background: #282e3d;
+            color: #fff;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: #3c4664;
+        }
+
+        .toast {
+            display: none;
+            text-align: center;
+            font-size: 11px;
+            color: #50fa7b;
+            margin-top: 2px;
+            font-weight: 600;
+        }
+
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 10px;
+            color: var(--text-sub);
+        }
     </style>
 </head>
 <body>
 
-    <div class="container" id="mainContainer">
-        
-        <!-- HANYA BAR PROGRESS DOANG (Akan melompat ke PALING ATAS layar saat Generate Key dipencet) -->
-        <div class="step-box" id="stepBox">
-            <h3>⚡ To generate your free key, please click the button below <span id="stepsLeftCount">5</span> more time(s)</h3>
-            <p>This supports the project and keeps keys free!</p>
-            <div class="progress-bar-bg">
-                <div class="progress-bar-fill" id="progressBar"></div>
-            </div>
-            <div class="progress-text" id="progressText">0 / 5 completed</div>
-            <button class="btn" id="stepBtn" onclick="handleStepClick()">👉 Continue (5 left)</button>
-        </div>
-
-        <!-- TOMBOL UTAMA -->
-        <button class="btn" id="mainBtn" onclick="initiateProcess()">
-            <span id="mainBtnText">Generate Key</span>
-        </button>
-
-        <!-- HASIL KEY & BANNER -->
-        <div class="result-section" id="resultSection">
-            <div class="result-title">Generated Key</div>
-            <div class="key-display" id="keyText">FREE-BEXZ-XXXXXXXX</div>
-            <button class="btn" id="copyBtn" onclick="copyKey()" style="padding: 10px; font-size: 13px;">Copy Key</button>
-            <div class="expiry-text">Expiry: 24 Hours</div>
-        </div>
-
-        <div class="banner" id="bannerBox">
-            <div class="banner-text">
-                <h4>STRONG VPN</h4>
-                <p>Defend your gaming experience. Defend against DDoS attacks</p>
-            </div>
-        </div>
-
-        <!-- HOW IT WORKS -->
-        <div class="info-box">
-            <h4>How it works</h4>
-            <ol>
-                <li>Click Generate Key — complete 5 quick steps to unlock</li>
-                <li>Copy the key using the Copy Key button</li>
-                <li>Activate the key in-game — validated via HWID</li>
-            </ol>
-        </div>
-
+<div class="container">
+    <div class="header">
+        <h1>BEXZ — KEY SYSTEM</h1>
+        <p>By Ɛ/Ɛ ʌʌʌʌʌ</p>
     </div>
 
-    <script>
-        let currentStep = 0;
-        const totalSteps = 5;
-        let isStepStarted = false;
+    <div class="how-it-works">
+        <h2>⚡ How it works</h2>
+        <ul class="steps">
+            <li class="step-item">
+                <span class="step-num">1</span>
+                <span>Click <b>Generate Key</b> to process your unique key string.</span>
+            </li>
+            <li class="step-item">
+                <span class="step-num">2</span>
+                <span>Copy the generated key using the <b>Copy Key</b> button.</span>
+            </li>
+            <li class="step-item">
+                <span class="step-num">3</span>
+                <span>Activate the key in-game (Valid for <b>24 Hours</b>).</span>
+            </li>
+        </ul>
+    </div>
 
-        function initiateProcess() {
-            if (!isStepStarted) {
-                isStepStarted = true;
-                // Memunculkan HANYA bar progress doang di PALING ATAS layar menggunakan flex
-                document.getElementById('stepBox').style.display = 'flex';
-            } else {
-                executeFinalGenerate();
+    <div class="action-area">
+        <button class="btn btn-green" id="genBtn" onclick="startGeneration()">
+            <div class="spinner" id="btnSpinner"></div>
+            <span id="btnText">GENERATE KEY</span>
+        </button>
+        
+        <div class="key-display-box" id="keyBox">
+            <span class="key-text" id="keyText">FREE-BEXZ-XXXXX</span>
+            <button class="copy-btn" id="copyBtn" onclick="copyKey()">COPY</button>
+        </div>
+
+        <div class="toast" id="toastMsg">✓ Key copied to clipboard!</div>
+
+        <a href="https://discord.gg/fcKnCrbhq" target="_blank" style="text-decoration: none;">
+            <button class="btn btn-blue">JOIN DISCORD</button>
+        </a>
+    </div>
+
+    <div class="footer">
+        Valid for 24 Hours • BEXZ Security Protocol
+    </div>
+</div>
+
+<script>
+    const COOLDOWN_TIME = 5 * 60 * 1000; // 5 Menit dalam milidetik
+
+    function checkCooldown() {
+        const lastGenTime = localStorage.getItem('bexz_last_gen_time');
+        if (lastGenTime) {
+            const timePassed = Date.now() - parseInt(lastGenTime);
+            if (timePassed < COOLDOWN_TIME) {
+                const remainingTime = COOLDOWN_TIME - timePassed;
+                startTimer(remainingTime);
+                return true;
             }
         }
+        return false;
+    }
 
-        function handleStepClick() {
-            window.open('https://shopee.co.id', '_blank');
+    function startGeneration() {
+        if (checkCooldown()) return;
 
-            currentStep++;
-            let left = totalSteps - currentStep;
+        const genBtn = document.getElementById('genBtn');
+        const btnSpinner = document.getElementById('btnSpinner');
+        const btnText = document.getElementById('btnText');
+
+        genBtn.disabled = true;
+        btnSpinner.style.display = 'block';
+        btnText.innerText = 'GENERATING...';
+
+        // Delay 1 Detik
+        setTimeout(() => {
+            btnSpinner.style.display = 'none';
+            generateKey();
             
-            document.getElementById('stepsLeftCount').innerText = left;
-            document.getElementById('progressText').innerText = `${currentStep} / ${totalSteps} completed`;
-            document.getElementById('progressBar').style.width = `${(currentStep / totalSteps) * 100}%`;
-            document.getElementById('stepBtn').innerText = `👉 Continue (${left} left)`;
+            // Simpan waktu generate & jalankan timer 5 menit
+            localStorage.setItem('bexz_last_gen_time', Date.now().toString());
+            startTimer(COOLDOWN_TIME);
+        }, 1000);
+    }
 
-            if (currentStep >= totalSteps) {
-                document.getElementById('stepBox').style.display = 'none';
-                const mainBtn = document.getElementById('mainBtn');
-                mainBtn.innerHTML = '🔑 <span id="mainBtnText">Generate Key</span>';
+    function generateKey() {
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        let randomSuffix = '';
+        for (let i = 0; i < 6; i++) {
+            randomSuffix += characters.charAt(Math.floor(Math.random() * characters.length));
+        }
+
+        const fullKey = 'FREE-BEXZ-' + randomSuffix;
+
+        document.getElementById('keyText').innerText = fullKey;
+        document.getElementById('keyBox').style.display = 'flex';
+    }
+
+    function startTimer(duration) {
+        const genBtn = document.getElementById('genBtn');
+        const btnText = document.getElementById('btnText');
+        genBtn.disabled = true;
+
+        let endTime = Date.now() + duration;
+
+        const interval = setInterval(() => {
+            let remaining = endTime - Date.now();
+
+            if (remaining <= 0) {
+                clearInterval(interval);
+                genBtn.disabled = false;
+                btnText.innerText = 'GENERATE NEW KEY';
+                localStorage.removeItem('bexz_last_gen_time');
+            } else {
+                let minutes = Math.floor(remaining / (1000 * 60));
+                let seconds = Math.floor((remaining % (1000 * 60)) / 1000);
+                btnText.innerText = `WAIT (${minutes}m ${seconds < 10 ? '0' : ''}${seconds}s)`;
             }
-        }
+        }, 1000);
+    }
 
-        function executeFinalGenerate() {
-            const mainBtn = document.getElementById('mainBtn');
-            mainBtn.disabled = true;
-            mainBtn.innerHTML = '<div class="spinner"></div> <span id="mainBtnText">Generating...</span>';
+    function copyKey() {
+        const keyText = document.getElementById('keyText').innerText;
+        const copyBtn = document.getElementById('copyBtn');
+        const toast = document.getElementById('toastMsg');
 
-            setTimeout(() => {
-                mainBtn.style.display = 'none';
-                document.getElementById('resultSection').style.display = 'flex';
-                document.getElementById('bannerBox').style.display = 'flex';
-                document.getElementById('keyText').innerText = generateCustomKey();
-            }, 1000);
-        }
-
-        function generateCustomKey() {
-            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            let randomPart = Array.from({length: 8}, () => chars[Math.floor(Math.random() * chars.length)]).join('');
-            return `FREE-BEXZ-${randomPart}`;
-        }
-
-        function copyKey() {
-            const keyText = document.getElementById('keyText').innerText;
+        if (navigator.clipboard && window.isSecureContext) {
             navigator.clipboard.writeText(keyText);
-            const copyBtn = document.getElementById('copyBtn');
-            copyBtn.innerText = 'Copied!';
-            setTimeout(() => {
-                copyBtn.innerText = 'Copy Key';
-            }, 2000);
+        } else {
+            const textArea = document.createElement("textarea");
+            textArea.value = keyText;
+            textArea.style.position = "fixed";
+            textArea.style.left = "-999999px";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
         }
-    </script>
+
+        copyBtn.innerText = 'COPIED!';
+        copyBtn.style.background = '#058c05';
+        toast.style.display = 'block';
+
+        setTimeout(() => {
+            copyBtn.innerText = 'COPY';
+            copyBtn.style.background = '#282e3d';
+            toast.style.display = 'none';
+        }, 2000);
+    }
+
+    // Cek cooldown saat halaman baru dimuat
+    window.onload = function() {
+        checkCooldown();
+    };
+</script>
+
 </body>
 </html>
