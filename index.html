@@ -1,127 +1,331 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zove Lua Obfuscator</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Key System</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
-        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
-        .glow:hover { box-shadow: 0 0 25px rgba(59, 130, 246, 0.4); }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+
+        /* 1. Kotak Progress / Step (Diposisikan paling atas) */
+        .step-box {
+            background-color: #161618;
+            border: 1px solid #252528;
+            border-radius: 12px;
+            padding: 20px;
+            width: 100%;
+            text-align: center;
+            display: none; /* Awalnya tersembunyi, muncul pas Generate Key dipencet */
+        }
+
+        .step-box h3 {
+            font-size: 13px;
+            margin-bottom: 8px;
+            line-height: 1.4;
+            color: #ddd;
+        }
+
+        .step-box h3 span {
+            color: #e53935;
+        }
+
+        .step-box p {
+            font-size: 11px;
+            color: #777;
+            margin-bottom: 15px;
+        }
+
+        .progress-bar-bg {
+            background-color: #262629;
+            border-radius: 10px;
+            height: 6px;
+            width: 100%;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .progress-bar-fill {
+            background-color: #e53935;
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            font-size: 11px;
+            color: #888;
+            margin-bottom: 15px;
+        }
+
+        /* Tombol Utama */
+        .btn {
+            background-color: #e53935;
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 0 15px rgba(229, 57, 53, 0.3);
+            transition: background 0.2s;
+        }
+
+        .btn:hover {
+            background-color: #d32f2f;
+        }
+
+        .btn:disabled {
+            background-color: #b71c1c;
+            opacity: 0.8;
+            cursor: not-allowed;
+        }
+
+        /* Kotak Hasil Key */
+        .result-section {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            gap: 8px;
+        }
+
+        .result-title {
+            font-size: 11px;
+            color: #888;
+            margin-top: 5px;
+        }
+
+        .key-display {
+            background-color: #161618;
+            border: 1px solid #252528;
+            border-radius: 10px;
+            padding: 12px;
+            width: 100%;
+            text-align: center;
+            font-family: monospace;
+            font-size: 12px;
+            color: #ff5252;
+            letter-spacing: 0.5px;
+        }
+
+        .expiry-text {
+            font-size: 10px;
+            color: #777;
+            margin-bottom: 5px;
+        }
+
+        /* Banner Sponsor */
+        .banner {
+            background: linear-gradient(135deg, #0d47a1, #1565c0);
+            border-radius: 8px;
+            padding: 10px 14px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            display: none;
+        }
+
+        .banner-text h4 {
+            font-size: 11px;
+            color: #ffeb3b;
+        }
+
+        .banner-text p {
+            font-size: 9px;
+            color: #ddd;
+        }
+
+        /* How It Works Box */
+        .info-box {
+            background-color: #161618;
+            border: 1px solid #252528;
+            border-radius: 12px;
+            padding: 16px;
+            width: 100%;
+        }
+
+        .info-box h4 {
+            font-size: 12px;
+            margin-bottom: 10px;
+            color: #ccc;
+        }
+
+        .info-box ol {
+            padding-left: 15px;
+            font-size: 11px;
+            color: #777;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .info-box ol li::marker {
+            color: #e53935;
+            font-weight: bold;
+        }
+
+        /* Spinner Loading Animation */
+        .spinner {
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
-<body class="bg-[#090d16] text-slate-100 min-h-screen flex flex-col justify-between selection:bg-blue-500 selection:text-white">
+<body>
 
-    <header class="w-full border-b border-slate-800/80 bg-[#090d16]/80 backdrop-blur sticky top-0 z-40">
-        <div class="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
-            <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center shadow-lg shadow-blue-500/30">
-                    <i class="fa-solid fa-shield-halved text-white text-lg"></i>
-                </div>
-                <span class="font-extrabold text-lg tracking-wider bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">ZOVE <span class="text-blue-500">OBFUSCATOR</span></span>
+    <div class="container" id="mainContainer">
+        
+        <!-- 1. Progress Box diletakkan PALING ATAS -->
+        <div class="step-box" id="stepBox">
+            <h3>⚡ To generate your free key, please click the button below <span id="stepsLeftCount">5</span> more time(s)</h3>
+            <p>This supports the project and keeps keys free!</p>
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="progressBar"></div>
+            </div>
+            <div class="progress-text" id="progressText">0 / 5 completed</div>
+            <button class="btn" id="stepBtn" onclick="handleStepClick()">👉 Continue (5 left)</button>
+        </div>
+
+        <!-- 2. Tombol Utama -->
+        <button class="btn" id="mainBtn" onclick="initiateProcess()">
+            <span id="mainBtnText">Generate Key</span>
+        </button>
+
+        <!-- 3. Hasil Key & Banner -->
+        <div class="result-section" id="resultSection">
+            <div class="result-title">Generated Key</div>
+            <div class="key-display" id="keyText">FREE-BEXZ-XXXXXXXX</div>
+            <button class="btn" id="copyBtn" onclick="copyKey()" style="padding: 10px; font-size: 13px;">Copy Key</button>
+            <div class="expiry-text">Expiry: 24 Hours</div>
+        </div>
+
+        <div class="banner" id="bannerBox">
+            <div class="banner-text">
+                <h4>STRONG VPN</h4>
+                <p>Defend your gaming experience. Defend against DDoS attacks</p>
             </div>
         </div>
-    </header>
 
-    <main class="max-w-4xl mx-auto px-4 w-full flex-grow flex items-center justify-center py-10">
-        <div class="glass rounded-2xl p-6 shadow-xl flex flex-col space-y-4 w-full">
-            <div class="flex items-center justify-between">
-                <label class="text-sm font-semibold text-slate-300 flex items-center space-x-2">
-                    <i class="fa-solid fa-code text-blue-500"></i>
-                    <span>Input Original Lua Script</span>
-                </label>
-                <button id="clearBtn" onclick="clearCode()" class="text-xs text-slate-400 transition-colors">Clear</button>
-            </div>
-            <textarea id="inputCode" oninput="checkInput()" placeholder="Paste your Lua script here..." class="w-full h-40 bg-[#0c1222] text-slate-200 text-sm font-mono p-4 rounded-xl border border-slate-800 focus:border-blue-500 focus:outline-none resize-none shadow-inner"></textarea>
-            
-            <button onclick="obfuscateCode()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold py-3.5 rounded-xl transition-all duration-300 shadow-lg shadow-blue-600/25 glow flex items-center justify-center space-x-2 text-sm">
-                <i class="fa-solid fa-wand-magic-sparkles"></i>
-                <span>Start Obfuscating Now</span>
-            </button>
-
-            <div class="flex items-center justify-between pt-2">
-                <label class="text-sm font-semibold text-slate-300 flex items-center space-x-2">
-                    <i class="fa-solid fa-file-shield text-emerald-500"></i>
-                    <span>Protected Output Result</span>
-                </label>
-                <button onclick="copyOutput()" class="text-xs text-blue-400 hover:text-blue-300 transition-colors flex items-center space-x-1">
-                    <i class="fa-regular fa-copy"></i>
-                    <span>Copy Code</span>
-                </button>
-            </div>
-            <textarea id="outputCode" readonly placeholder="Obfuscated result will appear here..." class="w-full h-40 bg-[#0c1222] text-emerald-400 text-sm font-mono p-4 rounded-xl border border-slate-800 resize-none shadow-inner"></textarea>
+        <!-- 4. How It Works -->
+        <div class="info-box">
+            <h4>How it works</h4>
+            <ol>
+                <li>Click Generate Key — complete 5 quick steps to unlock</li>
+                <li>Copy the key using the Copy Key button</li>
+                <li>Activate the key in-game — validated via HWID</li>
+            </ol>
         </div>
-    </main>
 
-    <footer class="w-full border-t border-slate-800/80 py-6 text-center text-xs text-slate-500">
-        <p>&copy; 2026 Zove Obfuscator. All rights reserved.</p>
-    </footer>
+    </div>
 
     <script>
-        function checkInput() {
-            let code = document.getElementById('inputCode').value;
-            let clearBtn = document.getElementById('clearBtn');
-            
-            if (code.trim().length > 0) {
-                clearBtn.classList.remove('text-slate-400');
-                clearBtn.classList.add('text-red-500', 'hover:text-red-400');
+        let currentStep = 0;
+        const totalSteps = 5;
+        let isStepCompleted = false;
+
+        function initiateProcess() {
+            if (!isStepCompleted) {
+                // Munculkan kotak step paling atas
+                document.getElementById('stepBox').style.display = 'block';
             } else {
-                clearBtn.classList.remove('text-red-500', 'hover:text-red-400');
-                clearBtn.classList.add('text-slate-400');
+                // Proses generate akhir (setelah step selesai)
+                executeFinalGenerate();
             }
         }
 
-        function clearCode() {
-            document.getElementById('inputCode').value = '';
-            document.getElementById('outputCode').value = '';
-            let clearBtn = document.getElementById('clearBtn');
-            clearBtn.classList.remove('text-red-500', 'hover:text-red-400');
-            clearBtn.classList.add('text-slate-400');
-        }
-
-        function obfuscateCode() {
-            let code = document.getElementById('inputCode').value;
+        function handleStepClick() {
+            currentStep++;
+            let left = totalSteps - currentStep;
             
-            if (!code.trim()) {
-                return;
+            document.getElementById('stepsLeftCount').innerText = left;
+            document.getElementById('progressText').innerText = `${currentStep} / ${totalSteps} completed`;
+            document.getElementById('progressBar').style.width = `${(currentStep / totalSteps) * 100}%`;
+            document.getElementById('stepBtn').innerText = `👉 Continue (${left} left)`;
+
+            if (currentStep < totalSteps) {
+                alert(`Menyelesaikan langkah ke-${currentStep}`);
+            } else {
+                isStepCompleted = true;
+                // Sembunyikan step box, ubah tombol utama jadi berikon kunci
+                document.getElementById('stepBox').style.display = 'none';
+                
+                const mainBtn = document.getElementById('mainBtn');
+                mainBtn.innerHTML = '🔑 <span id="mainBtnText">Generate Key</span>';
             }
-
-            let encodedCode = btoa(unescape(encodeURIComponent(code)));
-
-            let result = `-- ZOVE SCRIPT LUA PROTECT\n` +
-                         `-- https://discord.gg/fcKnCrbhq\n\n` +
-                         `local _zove_data = "${encodedCode}"\n` +
-                         `local function _zove_decode(data)\n` +
-                         `    local b = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'\n` +
-                         `    data = string.gsub(data, '[^'..b..'=]', '')\n` +
-                         `    return (data:gsub('.', function(x)\n` +
-                         `        if (x == '=') then return '' end\n` +
-                         `        local r,f='',(b:find(x)-1)\n` +
-                         `        for i=6,1,-1 do r=r..(f%2^i-f%2^(i-1)>0 and '1' or '0') end\n` +
-                         `        return r;\n` +
-                         `    end):gsub('%d%d%d?%d?%d?%d?%d?%d?', function(x)\n` +
-                         `        if (#x ~= 8) then return '' end\n` +
-                         `        local c=0\n` +
-                         `        for i=1,8 do c=c+(x:sub(i,i)=='1' and 2^(8-i) or 0) end\n` +
-                         `        return string.char(c)\n` +
-                         `    end))\n` +
-                         `end\n\n` +
-                         `pcall(function()\n` +
-                         `    local realCode = _zove_decode(_zove_data)\n` +
-                         `    loadstring(realCode)()\n` +
-                         `end)`;
-
-            document.getElementById('outputCode').value = result;
         }
 
-        function copyOutput() {
-            let output = document.getElementById('outputCode');
-            if (!output.value) return;
-            output.select();
-            navigator.clipboard.writeText(output.value);
+        function executeFinalGenerate() {
+            const mainBtn = document.getElementById('mainBtn');
+
+            // Ubah jadi status Loading
+            mainBtn.disabled = true;
+            mainBtn.innerHTML = '<div class="spinner"></div> <span id="mainBtnText">Generating...</span>';
+
+            // Jeda 1 detik sesuai permintaan
+            setTimeout(() => {
+                mainBtn.style.display = 'none';
+                document.getElementById('resultSection').style.display = 'flex';
+                document.getElementById('bannerBox').style.display = 'flex';
+                
+                // Key selalu berawalan FREE-BEXZ- dengan string acak lebih dari 4 huruf (misal 8 digit)
+                document.getElementById('keyText').innerText = generateCustomKey();
+            }, 1000);
+        }
+
+        function generateCustomKey() {
+            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            // Membuat bagian belakang (X) sepanjang 8 karakter (lebih dari 4 huruf)
+            let randomPart = Array.from({length: 8}, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+            return `FREE-BEXZ-${randomPart}`;
+        }
+
+        function copyKey() {
+            const keyText = document.getElementById('keyText').innerText;
+            navigator.clipboard.writeText(keyText);
+            const copyBtn = document.getElementById('copyBtn');
+            copyBtn.innerText = 'Copied!';
+            setTimeout(() => {
+                copyBtn.innerText = 'Copy Key';
+            }, 2000);
         }
     </script>
 </body>
