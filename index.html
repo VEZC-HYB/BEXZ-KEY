@@ -15,11 +15,12 @@
         body {
             background-color: #121212;
             color: #ffffff;
+            /* Ubah dari center ke flex-start dengan padding atas agar posisi benar-benar di atas */
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start;
             min-height: 100vh;
-            padding: 20px;
+            padding: 10px 20px;
         }
 
         .container {
@@ -28,25 +29,25 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 16px;
+            gap: 12px;
         }
 
-        /* 1. KOTAK PROGRESS BAR (Posisinya di PALING ATAS, tapi awalnya disembunyikan) */
+        /* KOTAK PROGRESS BAR PALING ATAS */
         .step-box {
             background-color: #161618;
             border: 1px solid #252528;
             border-radius: 12px;
-            padding: 20px;
+            padding: 16px;
             width: 100%;
             text-align: center;
-            display: none; /* Baru muncul pas Generate Key dipencet */
+            display: none; /* Muncul pas Generate Key dipencet */
             flex-direction: column;
             align-items: center;
         }
 
         .step-box h3 {
             font-size: 13px;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             line-height: 1.4;
             color: #ddd;
         }
@@ -58,7 +59,7 @@
         .step-box p {
             font-size: 11px;
             color: #777;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
 
         .progress-bar-bg {
@@ -67,7 +68,7 @@
             height: 6px;
             width: 100%;
             overflow: hidden;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .progress-bar-fill {
@@ -80,10 +81,10 @@
         .progress-text {
             font-size: 11px;
             color: #888;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
 
-        /* 2. TOMBOL UTAMA */
+        /* TOMBOL UTAMA */
         .btn {
             background-color: #e53935;
             color: white;
@@ -112,7 +113,7 @@
             cursor: not-allowed;
         }
 
-        /* 3. KOTAK HASIL KEY */
+        /* KOTAK HASIL KEY */
         .result-section {
             display: none;
             flex-direction: column;
@@ -168,7 +169,7 @@
             color: #ddd;
         }
 
-        /* 4. HOW IT WORKS */
+        /* HOW IT WORKS */
         .info-box {
             background-color: #161618;
             border: 1px solid #252528;
@@ -216,7 +217,7 @@
 
     <div class="container" id="mainContainer">
         
-        <!-- KOTAK PROGRESS BAR (Posisinya ditaruh PALING ATAS di HTML) -->
+        <!-- KOTAK PROGRESS BAR (POSISI PALING ATAS URUTAN HTML & LAYAR) -->
         <div class="step-box" id="stepBox">
             <h3>⚡ To generate your free key, please click the button below <span id="stepsLeftCount">5</span> more time(s)</h3>
             <p>This supports the project and keeps keys free!</p>
@@ -224,11 +225,10 @@
                 <div class="progress-bar-fill" id="progressBar"></div>
             </div>
             <div class="progress-text" id="progressText">0 / 5 completed</div>
-            <!-- Tombol Continue buat buka link iklan -->
             <button class="btn" id="stepBtn" onclick="handleStepClick()">👉 Continue (5 left)</button>
         </div>
 
-        <!-- TOMBOL UTAMA (Generate Key awal) -->
+        <!-- TOMBOL UTAMA -->
         <button class="btn" id="mainBtn" onclick="initiateProcess()">
             <span id="mainBtnText">Generate Key</span>
         </button>
@@ -268,16 +268,14 @@
         function initiateProcess() {
             if (!isStepStarted) {
                 isStepStarted = true;
-                // Pas tombol Generate Key dipencet, kotak progress bar muncul di PALING ATAS
+                // Memunculkan progress bar persis di paling atas layar
                 document.getElementById('stepBox').style.display = 'flex';
             } else {
-                // Kalau step sudah selesai, ini fungsi buat generate key terakhir
                 executeFinalGenerate();
             }
         }
 
         function handleStepClick() {
-            // Membuka link iklan/Shopee di tab baru
             window.open('https://shopee.co.id', '_blank');
 
             currentStep++;
@@ -289,10 +287,7 @@
             document.getElementById('stepBtn').innerText = `👉 Continue (${left} left)`;
 
             if (currentStep >= totalSteps) {
-                // Selesai 5 langkah: Kotak progress bar hilang
                 document.getElementById('stepBox').style.display = 'none';
-                
-                // Tombol utama di bawah berubah jadi ada ikon kunci
                 const mainBtn = document.getElementById('mainBtn');
                 mainBtn.innerHTML = '🔑 <span id="mainBtnText">Generate Key</span>';
             }
@@ -300,8 +295,6 @@
 
         function executeFinalGenerate() {
             const mainBtn = document.getElementById('mainBtn');
-
-            // Ubah tombol jadi status Loading (menunggu 1 detik)
             mainBtn.disabled = true;
             mainBtn.innerHTML = '<div class="spinner"></div> <span id="mainBtnText">Generating...</span>';
 
@@ -309,8 +302,6 @@
                 mainBtn.style.display = 'none';
                 document.getElementById('resultSection').style.display = 'flex';
                 document.getElementById('bannerBox').style.display = 'flex';
-                
-                // Format Key: FREE-BEXZ- diikuti 8 karakter acak (lebih dari 4 huruf)
                 document.getElementById('keyText').innerText = generateCustomKey();
             }, 1000);
         }
